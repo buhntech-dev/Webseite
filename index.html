@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Community Rangverwaltung</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2d;--panel2:#18233b;--line:#263552;--muted:#9aabc7;--text:#eef4ff;--accent:#7c9cff;--green:#55d6a0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 10% -10%,#263b70 0%,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:30px max(20px,calc((100% - 1100px)/2));border-bottom:1px solid var(--line);background:#0b1020cc}
+h1{margin:0;font-size:clamp(25px,4vw,38px)}header p{margin:7px 0 0;color:var(--muted)}
+main{max-width:1100px;margin:26px auto;padding:0 18px 60px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:linear-gradient(160deg,var(--panel),#10182a);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 40px #0002}
+.wide{grid-column:1/-1}h2{font-size:19px;margin:0 0 14px}.hint{color:var(--muted);font-size:13px}
+label{display:block;font-weight:650;margin:12px 0 6px}input,select,textarea{width:100%;background:#0c1425;color:var(--text);border:1px solid #334564;border-radius:10px;padding:11px 12px;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{border:0;border-radius:10px;padding:11px 15px;background:var(--accent);color:#081126;font-weight:750;cursor:pointer;margin:8px 6px 0 0}button.secondary{background:#263754;color:var(--text)}button.copy{background:var(--green);color:#062116}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#080e1b;border:1px solid var(--line);border-radius:12px;padding:14px;min-height:76px;color:#dce8ff}
+.rankgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px}.rank{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0d1628}.rank b{display:block}.rank small{color:var(--muted)}
+.notice{border-left:3px solid #f2bd58;padding:10px 13px;background:#2b2416;border-radius:8px;color:#f7dfad;font-size:13px}
+footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
+@media(max-width:760px){main{grid-template-columns:1fr}.wide{grid-column:auto}}
+</style></head>
+<body>
+<header><h1>⛏ Community Rangverwaltung</h1><p>LuckPerms-Befehle erstellen · Minecraft Paper · Aternos</p></header>
+<main>
+<section class="card"><h2>👤 Spieler-Rang vergeben</h2>
+<p class="hint">Spielernamen eingeben, Rang wählen und den Befehl für die Aternos-Konsole erzeugen.</p>
+<label for="player">Minecraft-Spielername</label><input id="player" maxlength="16" placeholder="z. B. Steve" autocomplete="off">
+<label for="rank">Neuer Rang</label><select id="rank">
+<option value="owner">Owner</option><option value="admin">Admin</option><option value="moderator">Moderator</option><option value="supporter">Supporter</option><option value="premium">Premium</option><option value="vip">VIP</option><option value="spieler" selected>Spieler</option>
+</select>
+<button onclick="assign()">Befehl erstellen</button><div id="assignout"><pre>/lp user Spielername parent set spieler</pre></div>
+</section>
+<section class="card"><h2>🎨 Rang-Prefix setzen</h2>
+<label for="prefixrank">Rang</label><select id="prefixrank">
+<option value="owner">Owner</option><option value="admin">Admin</option><option value="moderator">Moderator</option><option value="supporter">Supporter</option><option value="premium">Premium</option><option value="vip">VIP</option><option value="spieler">Spieler</option>
+</select>
+<label for="prefix">Prefix (Minecraft-Farbcodes mit &)</label><input id="prefix" value="&7[Spieler] &f" maxlength="40">
+<button onclick="makePrefix()">Prefix-Befehl erstellen</button><div id="prefixout"><pre>/lp group spieler meta setprefix 1 "&7[Spieler] &f"</pre></div>
+<p class="hint">Damit Prefixe im Chat und in TAB erscheinen, müssen TAB/Chat-Plugin passend konfiguriert sein.</p>
+</section>
+<section class="card wide"><h2>🛠 Gruppen einmalig anlegen</h2>
+<p class="hint">Wenn die Gruppen noch nicht existieren: Befehle in der Aternos-Konsole einzeln ausführen.</p>
+<pre id="groups">/lp creategroup owner
+/lp creategroup admin
+/lp creategroup moderator
+/lp creategroup supporter
+/lp creategroup premium
+/lp creategroup vip
+/lp creategroup spieler
+/lp setdefaultgroup spieler</pre>
+<button class="copy" onclick="copyText('groups')">Gruppen-Befehle kopieren</button>
+</section>
+<section class="card"><h2>🔐 Beispielrechte</h2>
+<label for="permrank">Rang</label><select id="permrank"><option value="admin">Admin</option><option value="moderator">Moderator</option><option value="supporter">Supporter</option><option value="premium">Premium</option><option value="vip">VIP</option><option value="spieler">Spieler</option></select>
+<label for="permission">Permission-Knoten</label><input id="permission" placeholder="z. B. essentials.fly">
+<label for="permvalue">Erlaubnis</label><select id="permvalue"><option value="true">Erlauben (true)</option><option value="false">Verbieten (false)</option></select>
+<button onclick="makePermission()">Rechte-Befehl erstellen</button><div id="permout"><pre>/lp group admin permission set essentials.fly true</pre></div>
+</section>
+<section class="card"><h2>📋 Deine Rangübersicht</h2><div class="rankgrid">
+<div class="rank"><b style="color:#ff6868">Owner</b><small>Serverleitung</small></div><div class="rank"><b style="color:#ff8b8b">Admin</b><small>Administration</small></div><div class="rank"><b style="color:#83d99b">Moderator</b><small>Moderation</small></div><div class="rank"><b style="color:#79d9ef">Supporter</b><small>Support</small></div><div class="rank"><b style="color:#ffd16a">Premium</b><small>Premium</small></div><div class="rank"><b style="color:#9de58c">VIP</b><small>VIP</small></div><div class="rank"><b style="color:#c1cce0">Spieler</b><small>Standard</small></div>
+</div></section>
+<section class="card wide"><h2>⚠️ Wichtig bei Aternos</h2><div class="notice">Diese GitHub-Pages-Webseite kann Aternos nicht direkt steuern. Aternos stellt dafür keine offizielle öffentliche Verwaltungs-API bzw. RCON-Verbindung bereit. Die Seite speichert keine Zugangsdaten und führt keine Befehle automatisch aus.</div>
+<ol><li>Server in Aternos starten und Konsole öffnen.</li><li>Den erzeugten Befehl hier kopieren.</li><li>In die Aternos-Konsole einfügen (ohne führenden Slash, falls die Konsole ihn nicht akzeptiert).</li><li>Enter drücken und die Ausgabe kontrollieren.</li></ol>
+<p class="hint">Vergib niemals pauschal * oder OP an Teamränge. Erteile nur die tatsächlich benötigten LuckPerms-Rechte. Owner-Rechte nur vertrauenswürdigen Personen geben.</p>
+</section>
+</main><footer>Community Rangverwaltung · Läuft lokal im Browser · Keine Passwörter oder Tokens erforderlich</footer>
+<script>
+function validPlayer(){const p=document.getElementById('player').value.trim();if(!/^[A-Za-z0-9_]{3,16}$/.test(p)){alert('Bitte einen gültigen Minecraft-Java-Spielernamen (3–16 Zeichen) eingeben.');return null}return p}
+function show(id,cmd){document.getElementById(id).innerHTML='';const pre=document.createElement('pre');pre.textContent=cmd;document.getElementById(id).appendChild(pre);const b=document.createElement('button');b.className='copy';b.textContent='Befehl kopieren';b.onclick=()=>navigator.clipboard.writeText(cmd).then(()=>b.textContent='Kopiert!').catch(()=>alert('Bitte den Befehl manuell markieren und kopieren.'));document.getElementById(id).appendChild(b)}
+function assign(){const p=validPlayer();if(!p)return;show('assignout','/lp user '+p+' parent set '+document.getElementById('rank').value)}
+function makePrefix(){const r=document.getElementById('prefixrank').value;const prefix=document.getElementById('prefix').value.replace(/"/g,"");show('prefixout','/lp group '+r+' meta setprefix 1 "'+prefix+'"')}
+function makePermission(){const r=document.getElementById('permrank').value;const perm=document.getElementById('permission').value.trim();if(!/^[a-zA-Z0-9_.:-]+$/.test(perm)){alert('Bitte einen gültigen Permission-Knoten eingeben.');return}show('permout','/lp group '+r+' permission set '+perm+' '+document.getElementById('permvalue').value)}
+function copyText(id){const t=document.getElementById(id).textContent;navigator.clipboard.writeText(t).then(()=>alert('Befehle kopiert.')).catch(()=>alert('Bitte den Text manuell kopieren.'))}
+</script></body></html>
