@@ -39,6 +39,12 @@ footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
 <button onclick="makePrefix()">Prefix-Befehl erstellen</button><div id="prefixout"><pre>/lp group spieler meta setprefix 1 "&7[Spieler] &f"</pre></div>
 <p class="hint">Damit Prefixe im Chat und in TAB erscheinen, müssen TAB/Chat-Plugin passend konfiguriert sein.</p>
 </section>
+<section class="card wide"><h2>🆕 Neue Spieler automatisch als „Spieler“ eintragen</h2>
+<p>Damit jeder neue Spieler automatisch die LuckPerms-Standardgruppe <b>Spieler</b> erhält, führe diesen Befehl einmal in der Aternos-Konsole aus:</p>
+<pre id="defaultgroup">lp setdefaultgroup spieler</pre>
+<button class="copy" onclick="copyText('defaultgroup')">Befehl kopieren</button>
+<p class="hint">Das gilt für neue Spieler ohne eigenen Rang. Bereits vergebene Team- und Sonderränge (z. B. Admin oder VIP) werden dadurch nicht überschrieben. Stelle sicher, dass die LuckPerms-Gruppe „spieler“ existiert.</p>
+</section>
 <section class="card wide"><h2>🛠 Gruppen einmalig anlegen</h2>
 <p class="hint">Wenn die Gruppen noch nicht existieren: Befehle in der Aternos-Konsole einzeln ausführen.</p>
 <pre id="groups">/lp creategroup owner
@@ -47,8 +53,7 @@ footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
 /lp creategroup supporter
 /lp creategroup premium
 /lp creategroup vip
-/lp creategroup spieler
-/lp setdefaultgroup spieler</pre>
+/lp creategroup spieler</pre>
 <button class="copy" onclick="copyText('groups')">Gruppen-Befehle kopieren</button>
 </section>
 <section class="card"><h2>🔐 Beispielrechte</h2>
